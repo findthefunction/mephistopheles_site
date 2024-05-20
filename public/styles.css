@@ -1,0 +1,117 @@
+body {
+    background-color: #000000; /* Pure black background */
+    color: #ffaa00; /* Golden yellow/orange text color */
+    font-family: 'VT323', monospace; /* Use VT323 font */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-size: 20px; /* Increase font size */
+    text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
+                 0 0 5px rgba(255, 170, 0, 0.6),
+                 0 0 10px rgba(255, 170, 0, 0.4);
+}
+
+.navbar {
+    width: 100%;
+    background-color: #000000; /* Pure black background */
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
+}
+
+.navbar a {
+    color: #ffaa00; /* Golden yellow/orange text color */
+    text-decoration: none;
+    padding: 5px 10px;
+    position: relative;
+    text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
+                 0 0 5px rgba(255, 170, 0, 0.6),
+                 0 0 10px rgba(255, 170, 0, 0.4);
+}
+
+.navbar a::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: transparent;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    transition: background 0.3s;
+}
+
+.navbar a:hover::after,
+.navbar a.active::after {
+    background: #ff0000; /* Red underline */
+}
+
+.terminal {
+    background-color: #000000; /* Pure black background */
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+    text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
+                 0 0 5px rgba(255, 170, 0, 0.6),
+                 0 0 10px rgba(255, 170, 0, 0.4);
+}
+
+.output {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.input {
+    display: flex;
+}
+
+.prompt {
+    margin-right: 5px;
+    color: #ffaa00; /* Golden yellow/orange for the prompt */
+}
+
+#terminal-input {
+    background: none;
+    border: none;
+    color: #ffaa00; /* Golden yellow/orange for input text */
+    width: 100%;
+    outline: none;
+    font-size: 20px; /* Increase font size */
+    text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
+                 0 0 5px rgba(255, 170, 0, 0.6),
+                 0 0 10px rgba(255, 170, 0, 0.4);
+}
+
+.output div {
+    margin: 2px 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.output .command {
+    color: #ffaa00; /* Golden yellow/orange for the command */
+    text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
+                 0 0 5px rgba(255, 170, 0, 0.6),
+                 0 0 10px rgba(255, 170, 0, 0.4);
+}
+
+.output .response {
+    color: #ffaa00; /* Golden yellow/orange for response */
+    text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
+                 0 0 5px rgba(255, 170, 0, 0.6),
+                 0 0 10px rgba(255, 170, 0, 0.4);
+}
+
+.output .error {
+    color: #ff0000; /* Red for error messages */
+    text-shadow: 0 0 2px rgba(255, 0, 0, 0.8),
+                 0 0 5px rgba(255, 0, 0, 0.6),
+                 0 0 10px rgba(255, 0, 0, 0.4);
+}
