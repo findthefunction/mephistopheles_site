@@ -42,9 +42,8 @@ app.get('/api/userdata', (req, res) => {
 
 app.get('/api/run-python', (req, res) => {
     const scriptPath = path.join(__dirname, 'scripts', 'script.py');
-    const dataPath = path.join(__dirname, 'data', 'datafile.csv');
     
-    exec(`python3 ${scriptPath} ${dataPath}`, (error, stdout, stderr) => {
+    exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error}`);
             return res.status(500).json({ error: 'Error executing script' });
