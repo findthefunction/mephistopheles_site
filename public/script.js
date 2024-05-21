@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const handleCommand = (command) => {
         switch (command.toLowerCase()) {
             case "help":
-                appendOutput("Available commands: help, about, contact, clear, userdata", 'response');
+                appendOutput("Available commands: help, about, contact, clear, userdata, run-python", 'response');
                 break;
             case "about":
                 appendOutput("This is a Linux terminal style portfolio website.", 'response');
@@ -52,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
             case "userdata":
                 fetchUserData();
+                break;
+            case "run-python":
+                runPythonScript();
                 break;
             default:
                 appendOutput(`Command not found: ${command}`, 'error');
@@ -82,5 +85,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 appendOutput(`Longitude: ${data.geo.longitude}`, 'response');
             })
             .catch(error => appendOutput("Error fetching user data", 'error'));
+    };
+
+    const runPythonScript = () => {
+        fetch("/api/run-python")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    appendOutput(`Error: ${data.error}`, 'error');
+                    if (data.details) {
+                        appendOutput(`Details: ${data.details}`, 'error');
+                    }
+                } else {
+                    appendOutput(`Python Output: ${data.output}`, 'response');
+                }
+            })
+            .catch(error => appendOutput("Error running Python script", 'error'));
     };
 });

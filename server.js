@@ -4,6 +4,7 @@ const path = require('path');
 const requestIp = require('request-ip');
 const useragent = require('express-useragent');
 const geoip = require('geoip-lite');
+const { exec } = require('child_process');
 
 app.use(requestIp.mw());
 app.use(useragent.express());
@@ -37,6 +38,23 @@ app.get('/api/userdata', (req, res) => {
     };
 
     res.json(userData);
+});
+
+app.get('/api/run-python', (req, res) => {
+    const scriptPath = path.join(__dirname, 'scripts', 'script.py');
+    const dataPath = path.join(__dirname, 'data', 'datafile.csv');
+    
+    exec(`python3 ${scriptPath} ${dataPath}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing script: ${error}`);
+            return res.status(500).json({ error: 'Error executing script' });
+        }
+        if (stderr) {
+            console.error(`Script error: ${stderr}`);
+            return res.status(500).json({ error: 'Script error', details: stderr });
+        }
+        res.json({ output: stdout });
+    });
 });
 
 app.listen(3000, () => {
