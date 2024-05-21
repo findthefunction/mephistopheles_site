@@ -9,6 +9,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const terminalInput = document.getElementById("terminal-input");
     const output = document.querySelector(".output");
+    const intro = document.querySelector(".intro");
+
+    const asciiArt = `
+     _______  __   __  _______  __    _  _______  _______ 
+    |       ||  | |  ||       ||  |  | ||       ||       |
+    |   _   ||  |_|  ||    ___||   |_| ||    ___||_     _|
+    |  | |  ||       ||   |___ |       ||   |___   |   |  
+    |  |_|  ||       ||    ___||  _    ||    ___|  |   |  
+    |       ||   _   ||   |___ | | |   ||   |___   |   |  
+    |_______||__| |__||_______||_|  |__||_______|  |___|  
+                                                         
+    `;
+    
+    const introMessage = `
+Welcome to my Linux terminal style portfolio site!
+    `;
+
+    const typeMessage = (message, container, delay = 50) => {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < message.length) {
+                container.innerHTML += message[index++];
+            } else {
+                clearInterval(interval);
+            }
+        }, delay);
+    };
+
+    // Display ASCII art and intro message with typing animation
+    typeMessage(asciiArt, intro, 10);
+    setTimeout(() => {
+        typeMessage(introMessage, intro, 30);
+    }, asciiArt.length * 20);
 
     terminalInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
