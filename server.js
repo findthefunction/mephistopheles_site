@@ -1,15 +1,20 @@
 const express = require('express');
-const app = express();
 const path = require('path');
 const requestIp = require('request-ip');
 const useragent = require('express-useragent');
 const geoip = require('geoip-lite');
 const { exec } = require('child_process');
 
+const app = express();
+
 app.use(requestIp.mw());
 app.use(useragent.express());
 
+// Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve static files from the models directory
+app.use('/models', express.static(path.join(__dirname, 'models')));
 
 app.get('/api/userdata', (req, res) => {
     const ip = req.clientIp;
@@ -28,29 +33,22 @@ app.get('/api/userdata', (req, res) => {
         isWindows: req.useragent.isWindows,
         isMac: req.useragent.isMac,
         isLinux: req.useragent.isLinux,
-        geo: {
-            country: geo ? geo.country : 'N/A',
-            region: geo ? geo.region : 'N/A',
-            city: geo ? geo.city : 'N/A',
-            latitude: geo ? geo.ll[0] : 'N/A',
-            longitude: geo ? geo.ll[1] : 'N/A'
-        }
+        geo: geo ? {
+            country: geo.country,
+            region: geo.region,
+            city: geo.city,
+            latitude: geo.ll[0],
+            longitude: geo.ll[1]
+        } : null
     };
-
     res.json(userData);
 });
 
 app.get('/api/run-python', (req, res) => {
-    const scriptPath = path.join(__dirname, 'scripts', 'script.py');
-    
-    exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
+    exec('python3 scripts/script.py', (error, stdout, stderr) => {
         if (error) {
-            console.error(`Error executing script: ${error}`);
-            return res.status(500).json({ error: 'Error executing script' });
-        }
-        if (stderr) {
-            console.error(`Script error: ${stderr}`);
-            return res.status(500).json({ error: 'Script error', details: stderr });
+            res.json({ error: error.message, details: stderr });
+            return;
         }
         res.json({ output: stdout });
     });

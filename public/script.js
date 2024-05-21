@@ -38,9 +38,9 @@ Welcome to my Linux terminal style portfolio site!
     };
 
     // Display ASCII art and intro message with typing animation
-    typeMessage(asciiArt, intro, 10);
+    typeMessage(asciiArt, intro, 20);
     setTimeout(() => {
-        typeMessage(introMessage, intro, 30);
+        typeMessage(introMessage, intro, 50);
     }, asciiArt.length * 20);
 
     terminalInput.addEventListener("keydown", (event) => {
@@ -135,4 +135,58 @@ Welcome to my Linux terminal style portfolio site!
             })
             .catch(error => appendOutput("Error running Python script", 'error'));
     };
+
+    // Three.js animated model
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('threejs-logo').appendChild(renderer.domElement);
+
+    const gltfLoader = new THREE.GLTFLoader();
+
+    gltfLoader.load('/models/scene.gltf', (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+
+        // Scale the model
+        model.scale.set(2, 2, 2);
+
+        // Initial rotation for better visibility
+        model.rotation.x = Math.PI / 5;
+        model.rotation.y = Math.PI / 5;
+        animate();
+    }, undefined, (error) => {
+        console.error(error);
+    });
+
+    // Lighting setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0xffaa00, 1, 100);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffaa00, 1);
+    directionalLight.position.set(-5, -5, -5);
+    scene.add(directionalLight);
+
+    camera.position.z = 5; // Move the camera closer to make the model appear larger
+
+    // Animation function
+    const animate = () => {
+        requestAnimationFrame(animate);
+
+        // Slow down the rotation
+        scene.rotation.y += 0.005;
+
+        // Add a pulsing effect to the point light
+        const time = Date.now() * 0.005;
+        pointLight.intensity = Math.sin(time) * 0.5 + 1.5;
+
+        renderer.render(scene, camera);
+    };
+
+    animate();
 });

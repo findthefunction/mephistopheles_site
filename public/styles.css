@@ -13,6 +13,15 @@ body {
                  0 0 10px rgba(255, 170, 0, 0.4);
 }
 
+#threejs-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Ensure it stays behind the terminal interface */
+}
+
 .navbar {
     width: 100%;
     background-color: #000000; /* Pure black background */
@@ -50,7 +59,7 @@ body {
 }
 
 .terminal {
-    background-color: #000000; /* Pure black background */
+    background-color: transparent; /* Fully transparent background */
     padding: 20px;
     border-radius: 10px;
     width: 80%;
@@ -63,9 +72,11 @@ body {
 }
 
 .output {
+    background-color: transparent; /* Fully transparent background */
     height: 400px;
     overflow-y: auto;
     margin-bottom: 10px;
+    color: #ffaa00;
 }
 
 .input {
