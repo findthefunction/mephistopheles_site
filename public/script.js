@@ -12,16 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const intro = document.querySelector(".intro");
 
     const asciiArt = `
-     _______  __   __  _______  __    _  _______  _______ 
-    |       ||  | |  ||       ||  |  | ||       ||       |
-    |   _   ||  |_|  ||    ___||   |_| ||    ___||_     _|
-    |  | |  ||       ||   |___ |       ||   |___   |   |  
-    |  |_|  ||       ||    ___||  _    ||    ___|  |   |  
-    |       ||   _   ||   |___ | | |   ||   |___   |   |  
-    |_______||__| |__||_______||_|  |__||_______|  |___|  
+    Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+                                                       
                                                          
     `;
-    
+
     const introMessage = `
 Welcome to my Linux terminal style portfolio site!
     `;
@@ -38,10 +33,24 @@ Welcome to my Linux terminal style portfolio site!
     };
 
     // Display ASCII art and intro message with typing animation
-    typeMessage(asciiArt, intro, 20);
-    setTimeout(() => {
-        typeMessage(introMessage, intro, 50);
-    }, asciiArt.length * 20);
+    const asciiArtContainer = document.createElement('div');
+    asciiArtContainer.className = 'ascii-art';
+    asciiArtContainer.textContent = asciiArt;
+    intro.appendChild(asciiArtContainer);
+
+    // Adjust font size for ASCII art
+    const adjustFontSize = () => {
+        const containerWidth = asciiArtContainer.clientWidth;
+        const charactersPerLine = asciiArt.split('\n')[0].length;
+        const fontSize = Math.min(containerWidth / charactersPerLine, 24); // Max font size of 24px
+        asciiArtContainer.style.fontSize = `${fontSize}px`;
+        asciiArtContainer.style.lineHeight = `${fontSize * 1.2}px`; // Adjust line height
+    };
+
+    window.addEventListener('resize', adjustFontSize);
+    adjustFontSize();
+
+    typeMessage(introMessage, intro, 50);
 
     terminalInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -172,7 +181,7 @@ Welcome to my Linux terminal style portfolio site!
     directionalLight.position.set(-5, -5, -5);
     scene.add(directionalLight);
 
-    camera.position.z = 5; // Move the camera closer to make the model appear larger
+    camera.position.z = 4; // Move the camera closer to make the model appear larger
 
     // Animation function
     const animate = () => {

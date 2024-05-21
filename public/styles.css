@@ -5,8 +5,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* Center content vertically */
     height: 100vh;
     margin: 0;
+    overflow: hidden; /* Hide overflow to remove scrollbars */
     font-size: 20px; /* Increase font size */
     text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
                  0 0 5px rgba(255, 170, 0, 0.6),
@@ -85,6 +87,8 @@ body {
 
 .prompt {
     margin-right: 5px;
+    font-size: 24px;
+
     color: #ffaa00; /* Golden yellow/orange for the prompt */
 }
 
@@ -94,7 +98,7 @@ body {
     color: #ffaa00; /* Golden yellow/orange for input text */
     width: 100%;
     outline: none;
-    font-size: 20px; /* Increase font size */
+    font-size: 24px;
     text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
                  0 0 5px rgba(255, 170, 0, 0.6),
                  0 0 10px rgba(255, 170, 0, 0.4);
@@ -125,4 +129,14 @@ body {
     text-shadow: 0 0 2px rgba(255, 0, 0, 0.8),
                  0 0 5px rgba(255, 0, 0, 0.6),
                  0 0 10px rgba(255, 0, 0, 0.4);
+}
+
+.ascii-art {
+    white-space: pre; /* Preserve whitespace and line breaks */
+    font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
+    width: 100%; /* Take the full width of the container */
+    overflow: hidden; /* Hide horizontal scrollbar */
+    text-align: center; /* Center the text horizontally */
+    margin: 0 auto; /* Center the container */
+    padding: 20px; /* Add some padding */
 }
