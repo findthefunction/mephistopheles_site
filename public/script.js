@@ -54,14 +54,14 @@ Welcome to my Linux terminal style portfolio site!
 
     terminalInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
-            const command = terminalInput.value;
+            const command = terminalInput.value.trim();
             terminalInput.value = "";
 
             // Display the command
             appendOutput(`user@portfolio:~$ ${command}`, 'command');
 
-            // Handle commands
-            handleCommand(command);
+            // Handle commands with a slight delay
+            setTimeout(() => handleCommand(command), 100);
         }
     });
 
@@ -81,7 +81,7 @@ Welcome to my Linux terminal style portfolio site!
     const handleCommand = (command) => {
         switch (command.toLowerCase()) {
             case "help":
-                appendOutput("Available commands: help, about, contact, clear, userdata, run-python", 'response');
+                appendOutput("Available commands: help, about, contact, clear, userdata, run-python, list-repos", 'response');
                 break;
             case "about":
                 appendOutput("This is a Linux terminal style portfolio website.", 'response');
@@ -100,6 +100,7 @@ Welcome to my Linux terminal style portfolio site!
                 break;
             case "list-repos":
                 listRepos();
+                break;
             default:
                 appendOutput(`Command not found: ${command}`, 'error');
         }
@@ -128,7 +129,7 @@ Welcome to my Linux terminal style portfolio site!
                 appendOutput(`Latitude: ${data.geo.latitude}`, 'response');
                 appendOutput(`Longitude: ${data.geo.longitude}`, 'response');
             })
-            .catch(error => appendOutput("Error fetching user data", 'error'));
+            .catch(err => appendOutput("Error fetching user data", 'error'));
     };
 
     const runPythonScript = () => {
@@ -144,10 +145,9 @@ Welcome to my Linux terminal style portfolio site!
                     appendOutput(`Python Output: ${data.output}`, 'response');
                 }
             })
-            .catch(error => appendOutput("Error running Python script", 'error'));
+            .catch(err => appendOutput("Error running Python script", 'error'));
     };
 
-    //github project list
     const listRepos = () => {
         fetch("/api/list-repos")
             .then(response => response.json())
@@ -158,11 +158,11 @@ Welcome to my Linux terminal style portfolio site!
                     data.forEach(repo => {
                         appendOutput(repo.name, 'response');
                     });
+                    appendOutput(`Total repositories: ${data.length}`, 'response');
                 }
             })
-            .catch(error => appendOutput("Error fetching repositories", 'error'));
+            .catch(err => appendOutput("Error fetching repositories", 'error'));
     };
-
 
     // Three.js animated model
     const scene = new THREE.Scene();
@@ -184,8 +184,8 @@ Welcome to my Linux terminal style portfolio site!
         model.rotation.x = Math.PI / 5;
         model.rotation.y = Math.PI / 5;
         animate();
-    }, undefined, (error) => {
-        console.error(error);
+    }, undefined, (err) => {
+        console.error(err);
     });
 
     // Lighting setup
