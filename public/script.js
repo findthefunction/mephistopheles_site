@@ -98,6 +98,8 @@ Welcome to my Linux terminal style portfolio site!
             case "run-python":
                 runPythonScript();
                 break;
+            case "list-repos":
+                listRepos();
             default:
                 appendOutput(`Command not found: ${command}`, 'error');
         }
@@ -145,6 +147,23 @@ Welcome to my Linux terminal style portfolio site!
             .catch(error => appendOutput("Error running Python script", 'error'));
     };
 
+    //github project list
+    const listRepos = () => {
+        fetch("/api/list-repos")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    appendOutput(`Error: ${data.error}`, 'error');
+                } else {
+                    data.forEach(repo => {
+                        appendOutput(repo.name, 'response');
+                    });
+                }
+            })
+            .catch(error => appendOutput("Error fetching repositories", 'error'));
+    };
+
+
     // Three.js animated model
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -188,7 +207,7 @@ Welcome to my Linux terminal style portfolio site!
         requestAnimationFrame(animate);
 
         // Slow down the rotation
-        scene.rotation.y += 0.005;
+        scene.rotation.y += 0.001;
 
         // Add a pulsing effect to the point light
         const time = Date.now() * 0.005;
