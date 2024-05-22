@@ -1,3 +1,5 @@
+import json
+
 data = [
     {'你好': {'frequency': 10, 'pinyin': 'nǐ hǎo', 'translation': 'Hello', 'example': '你好，李先生。', 'example_translation': 'Hello, Mr. Li.', 'usage_notes': 'Used as a common greeting.'}},
     {'谢谢': {'frequency': 9, 'pinyin': 'xièxie', 'translation': 'Thank you', 'example': '谢谢你的帮助。', 'example_translation': 'Thank you for your help.', 'usage_notes': 'Expresses gratitude.'}},
@@ -534,3 +536,13 @@ data.extend([
     {'你会唱歌吗？': {'frequency': 5, 'pinyin': 'nǐ huì chànggē ma?', 'translation': 'Can you sing?', 'example': '你会唱歌吗？', 'example_translation': 'Can you sing?', 'usage_notes': 'Asking if someone can sing.'}},
     {'我会唱歌。': {'frequency': 5, 'pinyin': 'wǒ huì chànggē.', 'translation': 'I can sing.', 'example': '我会唱歌。', 'example_translation': 'I can sing.', 'usage_notes': 'Expressing that you can sing.'}}
 ])
+
+
+# Convert the Python dictionary to a JSON string
+json_data = json.dumps(data, ensure_ascii=False, indent=2)
+
+# Save the JSON string to a file
+with open('flashcards.js', 'w', encoding='utf-8') as file:
+    file.write(f'const flashcards = {json_data};')
+
+print("Data converted to JavaScript format and saved to flashcards.js")

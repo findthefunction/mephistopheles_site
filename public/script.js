@@ -81,7 +81,7 @@ Welcome to my Linux terminal style portfolio site!
     const handleCommand = (command) => {
         switch (command.toLowerCase()) {
             case "help":
-                appendOutput("Available commands: help, about, contact, clear, userdata, run-python, list-repos", 'response');
+                appendOutput("Available commands: help, about, contact, clear, userdata, run-python, list-repos, cookies, headers, geo, fingerprint, scan", 'response');
                 break;
             case "about":
                 appendOutput("This is a Linux terminal style portfolio website.", 'response');
@@ -100,6 +100,21 @@ Welcome to my Linux terminal style portfolio site!
                 break;
             case "list-repos":
                 listRepos();
+                break;
+            case "cookies":
+                displayCookies();
+                break;
+            case "headers":
+                displayHeaders();
+                break;
+            case "geo":
+                displayGeolocation();
+                break;
+            case "fingerprint":
+                displayFingerprint();
+                break;
+            case "scan":
+                runVulnerabilityScan();
                 break;
             default:
                 appendOutput(`Command not found: ${command}`, 'error');
@@ -163,6 +178,86 @@ Welcome to my Linux terminal style portfolio site!
             })
             .catch(err => appendOutput("Error fetching repositories", 'error'));
     };
+
+    const displayCookies = () => {
+        const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+
+        if (cookies.length === 0 || cookies[0] === '') {
+            appendOutput("No cookies found.", 'response');
+        } else {
+            cookies.forEach(cookie => {
+                appendOutput(cookie, 'response');
+            });
+        }
+    };
+
+    const displayHeaders = () => {
+        fetch("/api/headers")
+            .then(response => response.json())
+            .then(data => {
+                Object.entries(data).forEach(([key, value]) => {
+                    appendOutput(`${key}: ${value}`, 'response');
+                });
+            })
+            .catch(err => appendOutput("Error fetching headers", 'error'));
+    };
+
+    const displayGeolocation = () => {
+        fetch("/api/userdata")
+            .then(response => response.json())
+            .then(data => {
+                if (data.geo) {
+                    appendOutput(`Country: ${data.geo.country}`, 'response');
+                    appendOutput(`Region: ${data.geo.region}`, 'response');
+                    appendOutput(`City: ${data.geo.city}`, 'response');
+                    appendOutput(`Latitude: ${data.geo.latitude}`, 'response');
+                    appendOutput(`Longitude: ${data.geo.longitude}`, 'response');
+                } else {
+                    appendOutput("Geolocation data not available.", 'response');
+                }
+            })
+            .catch(err => appendOutput("Error fetching geolocation", 'error'));
+    };
+
+    const displayFingerprint = () => {
+        const fingerprint = {
+            screen: {
+                width: window.screen.width,
+                height: window.screen.height,
+                colorDepth: window.screen.colorDepth
+            },
+            navigator: {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                doNotTrack: navigator.doNotTrack
+            },
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        };
+        appendOutput(JSON.stringify(fingerprint, null, 2), 'response');
+    };
+
+    const runVulnerabilityScan = () => {
+        appendOutput("Initiating vulnerability scan... Please wait.", 'command');
+        appendOutput("Scanning network interfaces and open ports.", 'info');
+    
+        fetch("/api/vulnerability-scan")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    appendOutput(`Scan error: ${data.error}`, 'error');
+                } else {
+                    appendOutput("Scan results:", 'info');
+                    Object.entries(data).forEach(([key, value]) => {
+                        appendOutput(`${key}: ${JSON.stringify(value, null, 2)}`, 'response');
+                    });
+                    appendOutput("Vulnerability scan complete.", 'info');
+                }
+            })
+            .catch(err => appendOutput(`Error running vulnerability scan: ${err.message}`, 'error'));
+    };
+    
+
 
     // Three.js animated model
     const scene = new THREE.Scene();

@@ -5,6 +5,7 @@ const useragent = require('express-useragent');
 const geoip = require('geoip-lite');
 const { exec } = require('child_process');
 const axios = require('axios');
+const nmap = require('node-nmap');
 require('dotenv').config();
 
 const app = express();
@@ -17,6 +18,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve static files from the models directory
 app.use('/models', express.static(path.join(__dirname, 'models')));
+
+// Serve the game directory
+app.use('/game', express.static(path.join(__dirname, 'public/game')));
 
 app.get('/api/userdata', (req, res) => {
     const ip = req.clientIp;
@@ -87,6 +91,59 @@ app.get('/api/list-repos', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+app.get('/api/headers', (req, res) => {
+    res.json(req.headers);
+});
+
+app.get('/api/fingerprint', (req, res) => {
+    const fingerprint = {
+        screen: {
+            width: req.query.screenWidth,
+            height: req.query.screenHeight,
+            colorDepth: req.query.colorDepth
+        },
+        navigator: {
+            userAgent: req.headers['user-agent'],
+            language: req.headers['accept-language'],
+            platform: req.headers['sec-ch-ua-platform'],
+            doNotTrack: req.headers['dnt']
+        },
+        timezone: req.query.timezone
+    };
+    res.json(fingerprint);
+});
+
+app.get('/api/vulnerability-scan', (req, res) => {
+    const ip = req.clientIp;
+    let responseSent = false; // Flag to check if response is already sent
+
+    console.log(`Starting vulnerability scan for IP: ${ip}`);
+    const scan = new nmap.NmapScan(ip);
+
+    scan.on('complete', (data) => {
+        if (!responseSent) {
+            console.log(`Scan complete for IP ${ip}: ${JSON.stringify(data)}`);
+            res.json(data);
+            responseSent = true; // Set the flag as response is sent
+        }
+    });
+
+    scan.on('error', (error) => {
+        if (!responseSent) {
+            console.error(`Scan error for IP ${ip}: ${error.message}`);
+            res.json({ error: error.message });
+            responseSent = true; // Set the flag as response is sent
+        }
+    });
+
+    scan.on('progress', (data) => {
+        console.log(`Scan progress for IP ${ip}: ${data.percent}% complete`);
+    });
+
+    scan.startScan();
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
