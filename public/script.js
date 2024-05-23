@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const terminalInput = document.getElementById("terminal-input");
+    
     const output = document.querySelector(".output");
     const intro = document.querySelector(".intro");
 
@@ -18,8 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const introMessage = `
-Welcome to my Linux terminal style portfolio site!
-    `;
+You are now active on findthefunction.io, type help for a list of commands.    `;
 
     const typeMessage = (message, container, delay = 50) => {
         let index = 0;
@@ -52,16 +52,28 @@ Welcome to my Linux terminal style portfolio site!
 
     typeMessage(introMessage, intro, 50);
 
+    let awaitingConsent = false;
+
     terminalInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             const command = terminalInput.value.trim();
             terminalInput.value = "";
 
-            // Display the command
             appendOutput(`user@portfolio:~$ ${command}`, 'command');
 
-            // Handle commands with a slight delay
-            setTimeout(() => handleCommand(command), 100);
+            if (awaitingConsent) {
+                if (command.toLowerCase() === "yes") {
+                    runVulnerabilityScan();
+                    awaitingConsent = false;
+                } else if (command.toLowerCase() === "no") {
+                    appendOutput("Scan cancelled by user.", 'info');
+                    awaitingConsent = false;
+                } else {
+                    appendOutput("Invalid response. Please type 'yes' to consent or 'no' to cancel.", 'info');
+                }
+            } else {
+                setTimeout(() => handleCommand(command), 100);
+            }
         }
     });
 
@@ -114,7 +126,7 @@ Welcome to my Linux terminal style portfolio site!
                 displayFingerprint();
                 break;
             case "scan":
-                runVulnerabilityScan();
+                requestScanConsent();
                 break;
             default:
                 appendOutput(`Command not found: ${command}`, 'error');
@@ -237,25 +249,43 @@ Welcome to my Linux terminal style portfolio site!
         appendOutput(JSON.stringify(fingerprint, null, 2), 'response');
     };
 
-    const runVulnerabilityScan = () => {
-        appendOutput("Initiating vulnerability scan... Please wait.", 'command');
-        appendOutput("Scanning network interfaces and open ports.", 'info');
-    
-        fetch("/api/vulnerability-scan")
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    appendOutput(`Scan error: ${data.error}`, 'error');
-                } else {
-                    appendOutput("Scan results:", 'info');
-                    Object.entries(data).forEach(([key, value]) => {
-                        appendOutput(`${key}: ${JSON.stringify(value, null, 2)}`, 'response');
-                    });
-                    appendOutput("Vulnerability scan complete.", 'info');
-                }
-            })
-            .catch(err => appendOutput(`Error running vulnerability scan: ${err.message}`, 'error'));
+    const requestScanConsent = () => {
+        appendOutput("Do you consent to perform a network vulnerability scan? This will check for open ports and potential vulnerabilities. Type 'yes' to consent or 'no' to cancel.", 'info');
+        awaitingConsent = true;
     };
+
+    
+    const runVulnerabilityScan = () => {
+    // Inform the user that the vulnerability scan is starting
+    appendOutput("Initiating vulnerability scan... Please wait.", 'command');
+
+    // Inform the user about the scan process
+    appendOutput("Scanning network interfaces and open ports.", 'info');
+
+    // Fetch the vulnerability scan results from the server endpoint
+    fetch("/api/vulnerability-scan")
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            // Check if there's an error in the response
+            if (data.error) {
+                // Display the error message if there is an error
+                appendOutput(`Scan error: ${data.error}`, 'error');
+            } else {
+                // Display the scan results
+                appendOutput("Scan results:", 'info');
+                // Loop through each result entry and display it
+                Object.entries(data).forEach(([key, value]) => {
+                    appendOutput(`${key}: ${JSON.stringify(value, null, 2)}`, 'response');
+                });
+                // Inform the user that the scan is complete
+                appendOutput("Vulnerability scan complete.", 'info');
+            }
+        })
+        .catch(err => {
+            // Handle and display any errors that occur during the fetch operation
+            appendOutput(`Error running vulnerability scan: ${err.message}`, 'error');
+        });
+};
     
 
 

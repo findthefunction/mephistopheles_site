@@ -6,6 +6,8 @@ const geoip = require('geoip-lite');
 const { exec } = require('child_process');
 const axios = require('axios');
 const nmap = require('node-nmap');
+nmap.nmapLocation = '/usr/bin/nmap'; // Specify the path to the Nmap executable
+
 require('dotenv').config();
 
 const app = express();
@@ -118,7 +120,7 @@ app.get('/api/vulnerability-scan', (req, res) => {
     let responseSent = false; // Flag to check if response is already sent
 
     console.log(`Starting vulnerability scan for IP: ${ip}`);
-    const scan = new nmap.NmapScan(ip);
+    const scan = new nmap.NmapScan(ip, ['-Pn', '-sV', '-O']); // Scan for open ports
 
     scan.on('complete', (data) => {
         if (!responseSent) {
@@ -140,8 +142,53 @@ app.get('/api/vulnerability-scan', (req, res) => {
         console.log(`Scan progress for IP ${ip}: ${data.percent}% complete`);
     });
 
+    // Handle stderr separately
+    scan.childProcess.stderr.on('data', (data) => {
+        console.error(`Nmap stderr: ${data}`);
+    });
+
     scan.startScan();
+
+    // Add a timeout to the scan
+    setTimeout(() => {
+        if (!responseSent) {
+            console.error(`Scan timeout for IP ${ip}`);
+            scan.cancelScan(); // Cancel the scan
+            res.json({ error: 'Scan timeout' });
+            responseSent = true; // Set the flag as response is sent
+        }
+    }, 60000); // 60 seconds timeout
 });
+// app.get('/api/vulnerability-scan', (req, res) => {
+//     const ip = req.clientIp;
+//     let responseSent = false; // Flag to check if response is already sent
+
+//     console.log(`Starting vulnerability scan for IP: ${ip}`);
+//     const scan = new nmap.NmapScan(ip, ' -Pn -sV -O'); // Scan for open ports
+
+//     scan.on('complete', (data) => {
+//         if (!responseSent) {
+//             console.log(`Scan complete for IP ${ip}: ${JSON.stringify(data)}`);
+//             res.json(data);
+//             responseSent = true; // Set the flag as response is sent
+//         }
+//     });
+
+//     scan.on('error', (error) => {
+//         if (!responseSent) {
+//             console.error(`Scan error for IP ${ip}: ${error.message}`);
+//             res.json({ error: error.message });
+//             responseSent = true; // Set the flag as response is sent
+//         }
+//     });
+
+//     scan.on('progress', (data) => {
+//         console.log(`Scan progress for IP ${ip}: ${data.percent}% complete`);
+//     });
+
+//     scan.startScan();
+// });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
