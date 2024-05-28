@@ -13,9 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const intro = document.querySelector(".intro");
 
     const asciiArt = `
+    TYPE 'RUN-PYTHON' TO LEARN MANDARIN  
+    TYPE 'SCAN' TO CHECK FOR VULNERABILITIES
+    TYPE 'USERDATA' TO DISPLAY USER INFORMATION
+    TYPE 'GEO' TO DISPLAY GEOLOCATION INFORMATION
+    TYPE 'FINGERPRINT' TO DISPLAY BROWSER FINGERPRINT
+    TYPE 'LIST-REPOS' TO LIST GITHUB REPOSITORIES 
     TYPE 'HELP' FOR A LIST OF COMMANDS
-    TYPE 'RUN-PYTHON' TO LEARN MANDARIN                                                       
-                                                         
+                                                                                                        
     `;
 
     const introMessage = `
