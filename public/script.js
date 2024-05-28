@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const intro = document.querySelector(".intro");
 
     const asciiArt = `
-    Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
-                                                       
+    TYPE 'HELP' FOR A LIST OF COMMANDS
+    TYPE 'RUN-PYTHON' TO LEARN MANDARIN                                                       
                                                          
     `;
 
