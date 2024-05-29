@@ -1,3 +1,4 @@
+/* styles.css */
 body {
     background-color: #000000; /* Pure black background */
     color: #ffaa00; /* Golden yellow/orange text color */
@@ -68,10 +69,10 @@ body {
     max-width: 800px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     margin-top: 20px;
-    font-size: 24px; /* Increase terminal font size */
     text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
                  0 0 5px rgba(255, 170, 0, 0.6),
                  0 0 10px rgba(255, 170, 0, 0.4);
+    font-size: 24px; /* Increase terminal font size */
 }
 
 .output {
@@ -80,6 +81,7 @@ body {
     overflow-y: auto;
     margin-bottom: 10px;
     color: #ffaa00;
+    font-size: 24px; /* Increase output font size */
 }
 
 .input {
@@ -88,8 +90,7 @@ body {
 
 .prompt {
     margin-right: 5px;
-    font-size: 24px;
-
+    font-size: 30px; /* Increase prompt font size */
     color: #ffaa00; /* Golden yellow/orange for the prompt */
 }
 
@@ -99,7 +100,7 @@ body {
     color: #ffaa00; /* Golden yellow/orange for input text */
     width: 100%;
     outline: none;
-    font-size: 24px;
+    font-size: 30px; /* Increase input font size */
     text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
                  0 0 5px rgba(255, 170, 0, 0.6),
                  0 0 10px rgba(255, 170, 0, 0.4);
@@ -139,5 +140,4 @@ body {
     overflow: hidden; /* Hide horizontal scrollbar */
     text-align: center; /* Center the text horizontally */
     margin: 0 auto; /* Center the container */
-    padding: 20px; /* Add some padding */
 }
