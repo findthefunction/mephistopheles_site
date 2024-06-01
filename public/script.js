@@ -17,17 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const introMessage = `
-    Welcome to my interactive portfolio. This site showcases various functionalities:<br>
+    Welcome to my interactive portfolio. This site showcases various functionalities:       
 
-    * Help: Type help for a list of available commands.
+    * Help: Type help for a list of available commands.     
 
-    * Public Information: Display public data accessible when visiting any website.
+    * Public Information: Display public data accessible when visiting any website.     
 
-    * Vulnerability Scan: Perform a network vulnerability scan with your consent (no data is stored).
+    * Vulnerability Scan: Perform a network vulnerability scan with your consent (no data is stored).       
 
-    * Learn Mandarin: Run a Python script within the JavaScript environment to learn Mandarin phrases (run-python).
+    * Learn Mandarin: Run a Python script within the JavaScript environment to learn Mandarin phrases (run-python).     
 
-    * API Integration: Demonstrates the use of multiple APIs.
+    * API Integration: Demonstrates the use of multiple APIs.       
 
     Explore the commands to experience the features and capabilities of this portfolio.
 
