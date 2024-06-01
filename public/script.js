@@ -13,20 +13,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const intro = document.querySelector(".intro");
 
     const asciiArt = `
-    TYPE 'RUN-PYTHON' TO LEARN MANDARIN  
-    TYPE 'SCAN' TO CHECK FOR VULNERABILITIES
-    TYPE 'USERDATA' TO DISPLAY USER INFORMATION
-    TYPE 'GEO' TO DISPLAY GEOLOCATION INFORMATION
-    TYPE 'FINGERPRINT' TO DISPLAY BROWSER FINGERPRINT
-    TYPE 'LIST-REPOS' TO LIST GITHUB REPOSITORIES 
-    TYPE 'HELP' FOR A LIST OF COMMANDS
-                                                                                                        
+    TYPE 'HELP' FOR A LIST OF COMMANDS                                                                                                   
     `;
 
     const introMessage = `
-You are now active on findthefunction.io, type help for a list of commands.    `;
+    Welcome to my interactive portfolio. This site showcases various functionalities:<br>
 
-    const typeMessage = (message, container, delay = 50) => {
+    * Help: Type help for a list of available commands.
+
+    * Public Information: Display public data accessible when visiting any website.
+
+    * Vulnerability Scan: Perform a network vulnerability scan with your consent (no data is stored).
+
+    * Learn Mandarin: Run a Python script within the JavaScript environment to learn Mandarin phrases (run-python).
+
+    * API Integration: Demonstrates the use of multiple APIs.
+
+    Explore the commands to experience the features and capabilities of this portfolio.
+
+    `;
+
+    const typeMessage = (message, container, delay = 20) => {
         let index = 0;
         const interval = setInterval(() => {
             if (index < message.length) {
@@ -133,9 +140,27 @@ You are now active on findthefunction.io, type help for a list of commands.    `
             case "scan":
                 requestScanConsent();
                 break;
+            case "weather":
+                getWeather();
+                break;
             default:
                 appendOutput(`Command not found: ${command}`, 'error');
         }
+    };
+
+    const getWeather = () => {
+        fetch("/api/weather")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    appendOutput(`Error: ${data.error}`, 'error');
+                } else {
+                    appendOutput(`Weather in ${data.city}, ${data.region}, ${data.country}:`, 'response');
+                    appendOutput(`Temperature: ${data.main.temp}°C`, 'response');
+                    appendOutput(`Weather: ${data.weather[0].description}`, 'response');
+                }
+            })
+            .catch(err => appendOutput("Error fetching weather data", 'error'));
     };
 
     const fetchUserData = () => {

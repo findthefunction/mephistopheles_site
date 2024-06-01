@@ -120,7 +120,7 @@ app.get('/api/vulnerability-scan', (req, res) => {
     let responseSent = false; // Flag to check if response is already sent
 
     console.log(`Starting vulnerability scan for IP: ${ip}`);
-    const scan = new nmap.NmapScan(ip, ['-Pn', '-sV', '-O']); // Scan for open ports
+    const scan = new nmap.NmapScan(ip, ['-Pn', '-sV', '-O', '--script=vuln']); // Include Nmap vulnerability scripts
 
     scan.on('complete', (data) => {
         if (!responseSent) {
@@ -159,36 +159,34 @@ app.get('/api/vulnerability-scan', (req, res) => {
         }
     }, 60000); // 60 seconds timeout
 });
-// app.get('/api/vulnerability-scan', (req, res) => {
-//     const ip = req.clientIp;
-//     let responseSent = false; // Flag to check if response is already sent
 
-//     console.log(`Starting vulnerability scan for IP: ${ip}`);
-//     const scan = new nmap.NmapScan(ip, ' -Pn -sV -O'); // Scan for open ports
+// Weather endpoint
+app.get('/api/weather', async (req, res) => {
+    const ip = req.clientIp;
+    const geo = geoip.lookup(ip);
 
-//     scan.on('complete', (data) => {
-//         if (!responseSent) {
-//             console.log(`Scan complete for IP ${ip}: ${JSON.stringify(data)}`);
-//             res.json(data);
-//             responseSent = true; // Set the flag as response is sent
-//         }
-//     });
+    if (!geo) {
+        return res.json({ error: 'Unable to determine location from IP address' });
+    }
 
-//     scan.on('error', (error) => {
-//         if (!responseSent) {
-//             console.error(`Scan error for IP ${ip}: ${error.message}`);
-//             res.json({ error: error.message });
-//             responseSent = true; // Set the flag as response is sent
-//         }
-//     });
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+    const { city, region, country } = geo;
+    const lat = geo.ll[0];
+    const lon = geo.ll[1];
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
-//     scan.on('progress', (data) => {
-//         console.log(`Scan progress for IP ${ip}: ${data.percent}% complete`);
-//     });
-
-//     scan.startScan();
-// });
-
+    try {
+        const response = await axios.get(url);
+        res.json({
+            city,
+            region,
+            country,
+            ...response.data
+        });
+    } catch (err) {
+        res.json({ error: 'Error fetching weather data' });
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
