@@ -1,4 +1,145 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingDialogue = document.getElementById('loading-dialogue');
+
+    const loadingMessages = [
+        "Initializing system...\n",
+        "Checking memory...\n",
+        "Loading resources...\n",
+        "Performing system checks...\n",
+        "Verifying integrity...\n",
+        "Applying cyberpunk theme...\n",
+        "Fetching user data...\n"
+    ];
+
+    const userDataMessages = [
+        "Fetching geolocation...\n",
+        "Fetching fingerprint...\n",
+        "Fetching headers...\n"
+    ];
+
+    const typeLoadingMessage = (messages, index = 0, callback) => {
+        if (index < messages.length) {
+            loadingDialogue.innerHTML += messages[index];
+            loadingDialogue.scrollTop = loadingDialogue.scrollHeight; // Auto-scroll
+            setTimeout(() => typeLoadingMessage(messages, index + 1, callback), 1000);
+        } else if (callback) {
+            callback();
+        }
+    };
+
+    const typeUserData = (data, delay = 500) => {
+        const keys = Object.keys(data);
+        let index = 0;
+
+        const interval = setInterval(() => {
+            if (index < keys.length) {
+                const key = keys[index];
+                loadingDialogue.innerHTML += `${key}: ${JSON.stringify(data[key], null, 2)}\n`;
+                loadingDialogue.scrollTop = loadingDialogue.scrollHeight; // Auto-scroll
+                index++;
+            } else {
+                clearInterval(interval);
+                setTimeout(() => {
+                    typeLoadingMessage(userDataMessages, 0, () => {
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                        }, 1000); // Increased wait time
+                    });
+                }, 1000); // Increased wait time
+            }
+        }, delay);
+    };
+
+    // Start loading messages
+    typeLoadingMessage(loadingMessages, 0, () => {
+        fetchUserData().then(data => {
+            typeUserData(data);
+        }).catch(err => {
+            loadingDialogue.innerHTML += `Error fetching user data: ${err.message}\n`;
+            loadingDialogue.scrollTop = loadingDialogue.scrollHeight; // Auto-scroll
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000); // Proceed even if there's an error
+        });
+    });
+
+    
+
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch("/api/userdata");
+            const data = await response.json();
+            loadingDialogue.innerHTML += `IP Address: ${data.ip}\n`;
+            loadingDialogue.innerHTML += `Browser: ${data.browser}\n`;
+            loadingDialogue.innerHTML += `Version: ${data.version}\n`;
+            loadingDialogue.innerHTML += `OS: ${data.os}\n`;
+            loadingDialogue.innerHTML += `Platform: ${data.platform}\n`;
+            loadingDialogue.innerHTML += `Source: ${data.source}\n`;
+            if (data.geo) {
+                loadingDialogue.innerHTML += `Geolocation: ${data.geo.city}, ${data.geo.region}, ${data.geo.country}\n`;
+                loadingDialogue.innerHTML += `Latitude: ${data.geo.latitude}\n`;
+                loadingDialogue.innerHTML += `Longitude: ${data.geo.longitude}\n`;
+            }
+            const response_1 = await fetch("/api/headers");
+            const data_1 = await response_1.json();
+            Object.entries(data_1).forEach(([key, value_1]) => {
+                loadingDialogue.innerHTML += `${key}: ${value_1}\n`;
+            });
+            const response_2 = await fetch("/api/fingerprint");
+            const data_2 = await response_2.json();
+            loadingDialogue.innerHTML += `Screen Width: ${data_2.screen.width}\n`;
+            loadingDialogue.innerHTML += `Screen Height: ${data_2.screen.height}\n`;
+            loadingDialogue.innerHTML += `Color Depth: ${data_2.screen.colorDepth}\n`;
+            loadingDialogue.innerHTML += `User Agent: ${data_2.navigator.userAgent}\n`;
+            loadingDialogue.innerHTML += `Language: ${data_2.navigator.language}\n`;
+            loadingDialogue.innerHTML += `Platform: ${data_2.navigator.platform}\n`;
+            loadingDialogue.innerHTML += `Do Not Track: ${data_2.navigator.doNotTrack}\n`;
+            loadingDialogue.innerHTML += `Timezone: ${data_2.timezone}\n`;
+            loadingDialogue.innerHTML += `Welcome\n`;
+
+            return data;
+        } catch (err) {
+            throw new Error("Error fetching user data");
+        }
+    };
+
+    // Matrix effect
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const matrixContainer = document.querySelector('.matrix');
+    if (matrixContainer) {
+        matrixContainer.appendChild(canvas);
+    }
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const columns = canvas.width / 20;
+    const drops = Array.from({ length: columns }, () => Math.floor(Math.random() * canvas.height));
+
+    const drawMatrix = () => {
+        context.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        context.fillStyle = '#0f0';
+        context.font = '20px monospace';
+
+        drops.forEach((y, x) => {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+            context.fillText(text, x * 20, y);
+
+            if (y > canvas.height && Math.random() > 0.975) {
+                drops[x] = 0;
+            } else {
+                drops[x] = y + 20;
+            }
+        });
+    };
+
+    setInterval(drawMatrix, 50);
+
+    
     const navLinks = document.querySelectorAll('.navbar a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -156,31 +297,31 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => appendOutput("Error fetching weather data", 'error'));
     };
 
-    const fetchUserData = () => {
-        fetch("/api/userdata")
-            .then(response => response.json())
-            .then(data => {
-                appendOutput(`IP Address: ${data.ip}`, 'response');
-                appendOutput(`Browser: ${data.browser}`, 'response');
-                appendOutput(`Version: ${data.version}`, 'response');
-                appendOutput(`OS: ${data.os}`, 'response');
-                appendOutput(`Platform: ${data.platform}`, 'response');
-                appendOutput('Mobile', 'boolean', data.isMobile);
-                appendOutput('iPhone', 'boolean', data.isiPhone);
-                appendOutput('Android', 'boolean', data.isAndroid);
-                appendOutput('Desktop', 'boolean', data.isDesktop);
-                appendOutput('Windows', 'boolean', data.isWindows);
-                appendOutput('Mac', 'boolean', data.isMac);
-                appendOutput('Linux', 'boolean', data.isLinux);
-                appendOutput(`Source: ${data.source}`, 'response');
-                appendOutput(`Country: ${data.geo.country}`, 'response');
-                appendOutput(`Region: ${data.geo.region}`, 'response');
-                appendOutput(`City: ${data.geo.city}`, 'response');
-                appendOutput(`Latitude: ${data.geo.latitude}`, 'response');
-                appendOutput(`Longitude: ${data.geo.longitude}`, 'response');
-            })
-            .catch(err => appendOutput("Error fetching user data", 'error'));
-    };
+    // const fetchUserData = () => {
+    //     fetch("/api/userdata")
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             appendOutput(`IP Address: ${data.ip}`, 'response');
+    //             appendOutput(`Browser: ${data.browser}`, 'response');
+    //             appendOutput(`Version: ${data.version}`, 'response');
+    //             appendOutput(`OS: ${data.os}`, 'response');
+    //             appendOutput(`Platform: ${data.platform}`, 'response');
+    //             appendOutput('Mobile', 'boolean', data.isMobile);
+    //             appendOutput('iPhone', 'boolean', data.isiPhone);
+    //             appendOutput('Android', 'boolean', data.isAndroid);
+    //             appendOutput('Desktop', 'boolean', data.isDesktop);
+    //             appendOutput('Windows', 'boolean', data.isWindows);
+    //             appendOutput('Mac', 'boolean', data.isMac);
+    //             appendOutput('Linux', 'boolean', data.isLinux);
+    //             appendOutput(`Source: ${data.source}`, 'response');
+    //             appendOutput(`Country: ${data.geo.country}`, 'response');
+    //             appendOutput(`Region: ${data.geo.region}`, 'response');
+    //             appendOutput(`City: ${data.geo.city}`, 'response');
+    //             appendOutput(`Latitude: ${data.geo.latitude}`, 'response');
+    //             appendOutput(`Longitude: ${data.geo.longitude}`, 'response');
+    //         })
+    //         .catch(err => appendOutput("Error fetching user data", 'error'));
+    // };
 
     const runPythonScript = () => {
         fetch("/api/run-python")

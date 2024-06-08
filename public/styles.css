@@ -142,3 +142,80 @@ body {
     padding: 20px; /* Add some padding */
     font-size: 24px; /* Increase ASCII art font size */
 }
+
+/* Loading screen styles */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000; /* Dark blue background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it is above all other elements */
+}
+
+.crt {
+    width: 90%; /* Increase width */
+    max-width: 800px; /* Increase max width */
+    height: 70%; /* Increase height */
+    max-height: 500px; /* Increase max height */
+    background: #001f3f; /* Same dark blue */
+    border: 3px solid #00ffff; /* Cyan border for CRT effect */
+    box-shadow: 0 0 20px #00ffff; /* Glow effect */
+    padding: 20px;
+    overflow: hidden;
+    font-family: 'Courier New', Courier, monospace; /* Old style font */
+    color: #00ffff; /* Cyan text color */
+    position: relative;
+    animation: flicker 0.2s infinite;
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.9; }
+}
+
+@keyframes crt-lines {
+    0% {background-position: 0 0;}
+    100% {background-position: 0 100%;}
+}
+
+.loading-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 255, 0.1),
+        rgba(0, 255, 255, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    animation: crt-lines 0.2s linear infinite;
+    pointer-events: none;
+}
+
+.matrix {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    background: black;
+    opacity: 0.2;
+}
+
+#loading-dialogue {
+    max-height: 90vh; /* Set a maximum height for the dialogue */
+    overflow-y: auto; /* Enable vertical scrolling */
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+}
+
