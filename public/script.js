@@ -17,20 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const introMessage = `
-    Welcome to my interactive portfolio. This site showcases various functionalities:       
-
-    * Help: Type help for a list of available commands.     
-
-    * Public Information: Display public data accessible when visiting any website.     
-
-    * Vulnerability Scan: Perform a network vulnerability scan with your consent (no data is stored).       
-
-    * Learn Mandarin: Run a Python script within the JavaScript environment to learn Mandarin phrases (run-python).     
-
-    * API Integration: Demonstrates the use of multiple APIs.       
-
+    Welcome to my interactive portfolio. This site showcases various functionalities:<br><br>
+    * Help: Type help for a list of available commands.<br>
+    * Public Information: Display public data accessible when visiting any website.<br>
+    * Vulnerability Scan: Perform a network vulnerability scan with your consent (no data is stored).<br>
+    * Learn Mandarin: Run a Python script within the JavaScript environment to learn Mandarin phrases (run-python).<br>
+    * API Integration: Demonstrates the use of multiple APIs.<br><br>
     Explore the commands to experience the features and capabilities of this portfolio.
-
     `;
 
     const typeMessage = (message, container, delay = 20) => {
@@ -47,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Display ASCII art and intro message with typing animation
     const asciiArtContainer = document.createElement('div');
     asciiArtContainer.className = 'ascii-art';
-    asciiArtContainer.textContent = asciiArt;
+    asciiArtContainer.innerText = asciiArt;  // Ensure ASCII art uses text content
     intro.appendChild(asciiArtContainer);
 
     // Adjust font size for ASCII art
@@ -93,10 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const newLine = document.createElement("div");
         newLine.className = type;
         if (type === 'boolean') {
-            newLine.textContent = `${text}: ${value ? 'true' : 'false'}`;
+            newLine.innerHTML = `${text}: ${value ? 'true' : 'false'}`;
             newLine.style.color = value ? 'limegreen' : 'red';
         } else {
-            newLine.textContent = text;
+            newLine.innerHTML = text;
         }
         output.appendChild(newLine);
         output.scrollTop = output.scrollHeight;
@@ -105,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const handleCommand = (command) => {
         switch (command.toLowerCase()) {
             case "help":
-                appendOutput("Available commands: help, about, contact, clear, userdata, run-python, list-repos, cookies, headers, geo, fingerprint, scan", 'response');
+                appendOutput("Available commands: help, about, contact, clear, userdata, run-python, list-repos, cookies, headers, geo, fingerprint, scan, weather", 'response');
                 break;
             case "about":
                 appendOutput("This is a Linux terminal style portfolio website.", 'response');
@@ -284,40 +277,37 @@ document.addEventListener("DOMContentLoaded", () => {
         awaitingConsent = true;
     };
 
-    
     const runVulnerabilityScan = () => {
-    // Inform the user that the vulnerability scan is starting
-    appendOutput("Initiating vulnerability scan... Please wait.", 'command');
+        // Inform the user that the vulnerability scan is starting
+        appendOutput("Initiating vulnerability scan... Please wait.", 'command');
 
-    // Inform the user about the scan process
-    appendOutput("Scanning network interfaces and open ports.", 'info');
+        // Inform the user about the scan process
+        appendOutput("Scanning network interfaces and open ports.", 'info');
 
-    // Fetch the vulnerability scan results from the server endpoint
-    fetch("/api/vulnerability-scan")
-        .then(response => response.json()) // Parse the JSON response
-        .then(data => {
-            // Check if there's an error in the response
-            if (data.error) {
-                // Display the error message if there is an error
-                appendOutput(`Scan error: ${data.error}`, 'error');
-            } else {
-                // Display the scan results
-                appendOutput("Scan results:", 'info');
-                // Loop through each result entry and display it
-                Object.entries(data).forEach(([key, value]) => {
-                    appendOutput(`${key}: ${JSON.stringify(value, null, 2)}`, 'response');
-                });
-                // Inform the user that the scan is complete
-                appendOutput("Vulnerability scan complete.", 'info');
-            }
-        })
-        .catch(err => {
-            // Handle and display any errors that occur during the fetch operation
-            appendOutput(`Error running vulnerability scan: ${err.message}`, 'error');
-        });
-};
-    
-
+        // Fetch the vulnerability scan results from the server endpoint
+        fetch("/api/vulnerability-scan")
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                // Check if there's an error in the response
+                if (data.error) {
+                    // Display the error message if there is an error
+                    appendOutput(`Scan error: ${data.error}`, 'error');
+                } else {
+                    // Display the scan results
+                    appendOutput("Scan results:", 'info');
+                    // Loop through each result entry and display it
+                    Object.entries(data).forEach(([key, value]) => {
+                        appendOutput(`${key}: ${JSON.stringify(value, null, 2)}`, 'response');
+                    });
+                    // Inform the user that the scan is complete
+                    appendOutput("Vulnerability scan complete.", 'info');
+                }
+            })
+            .catch(err => {
+                // Handle and display any errors that occur during the fetch operation
+                appendOutput(`Error running vulnerability scan: ${err.message}`, 'error');
+            });
+    };
 
     // Three.js animated model
     const scene = new THREE.Scene();

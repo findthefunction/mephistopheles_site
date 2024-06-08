@@ -11,6 +11,7 @@ nmap.nmapLocation = '/usr/bin/nmap'; // Specify the path to the Nmap executable
 require('dotenv').config();
 
 const app = express();
+app.use(express.json()); // For parsing application/json
 
 app.use(requestIp.mw());
 app.use(useragent.express());
@@ -24,6 +25,7 @@ app.use('/models', express.static(path.join(__dirname, 'models')));
 // Serve the game directory
 app.use('/game', express.static(path.join(__dirname, 'public/game')));
 
+// Fetch user data endpoint
 app.get('/api/userdata', (req, res) => {
     const ip = req.clientIp;
     const geo = geoip.lookup(ip);
@@ -52,6 +54,7 @@ app.get('/api/userdata', (req, res) => {
     res.json(userData);
 });
 
+// Run Python script endpoint
 app.get('/api/run-python', (req, res) => {
     exec('python3 scripts/script.py', (error, stdout, stderr) => {
         if (error) {
@@ -62,6 +65,7 @@ app.get('/api/run-python', (req, res) => {
     });
 });
 
+// List GitHub repositories endpoint
 app.get('/api/list-repos', async (req, res) => {
     const token = process.env.GITHUB_TOKEN;
     const username = process.env.GITHUB_USERNAME;
@@ -93,10 +97,12 @@ app.get('/api/list-repos', async (req, res) => {
     }
 });
 
+// Fetch headers endpoint
 app.get('/api/headers', (req, res) => {
     res.json(req.headers);
 });
 
+// Fetch fingerprint endpoint
 app.get('/api/fingerprint', (req, res) => {
     const fingerprint = {
         screen: {
@@ -115,52 +121,19 @@ app.get('/api/fingerprint', (req, res) => {
     res.json(fingerprint);
 });
 
-app.get('/api/vulnerability-scan', (req, res) => {
+// Perform vulnerability scan endpoint
+app.get('/api/vulnerability-scan', async (req, res) => {
     const ip = req.clientIp;
-    let responseSent = false; // Flag to check if response is already sent
 
-    console.log(`Starting vulnerability scan for IP: ${ip}`);
-    const scan = new nmap.NmapScan(ip, ['-Pn', '-sV', '-O', '--script=vuln']); // Include Nmap vulnerability scripts
-
-    scan.on('complete', (data) => {
-        if (!responseSent) {
-            console.log(`Scan complete for IP ${ip}: ${JSON.stringify(data)}`);
-            res.json(data);
-            responseSent = true; // Set the flag as response is sent
-        }
-    });
-
-    scan.on('error', (error) => {
-        if (!responseSent) {
-            console.error(`Scan error for IP ${ip}: ${error.message}`);
-            res.json({ error: error.message });
-            responseSent = true; // Set the flag as response is sent
-        }
-    });
-
-    scan.on('progress', (data) => {
-        console.log(`Scan progress for IP ${ip}: ${data.percent}% complete`);
-    });
-
-    // Handle stderr separately
-    scan.childProcess.stderr.on('data', (data) => {
-        console.error(`Nmap stderr: ${data}`);
-    });
-
-    scan.startScan();
-
-    // Add a timeout to the scan
-    setTimeout(() => {
-        if (!responseSent) {
-            console.error(`Scan timeout for IP ${ip}`);
-            scan.cancelScan(); // Cancel the scan
-            res.json({ error: 'Scan timeout' });
-            responseSent = true; // Set the flag as response is sent
-        }
-    }, 60000); // 60 seconds timeout
+    try {
+        const response = await axios.get(`https://internetdb.shodan.io/${ip}`);
+        res.json(response.data);
+    } catch (err) {
+        res.json({ error: 'Error fetching port information' });
+    }
 });
 
-// Weather endpoint
+// Fetch weather data endpoint
 app.get('/api/weather', async (req, res) => {
     const ip = req.clientIp;
     const geo = geoip.lookup(ip);
