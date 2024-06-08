@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Loading resources...\n",
         "Performing system checks...\n",
         "Verifying integrity...\n",
-        "Applying cyberpunk theme...\n",
+        "Always let a wookie win...\n",
         "Fetching user data...\n"
     ];
 
@@ -96,13 +96,25 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingDialogue.innerHTML += `Platform: ${data_2.navigator.platform}\n`;
             loadingDialogue.innerHTML += `Do Not Track: ${data_2.navigator.doNotTrack}\n`;
             loadingDialogue.innerHTML += `Timezone: ${data_2.timezone}\n`;
+    
+            // Fetch and display weather data
+            const weatherResponse = await fetch("/api/weather");
+            const weatherData = await weatherResponse.json();
+            if (weatherData.error) {
+                loadingDialogue.innerHTML += `Error fetching weather data: ${weatherData.error}\n`;
+            } else {
+                loadingDialogue.innerHTML += `Weather in ${weatherData.city}, ${weatherData.region}, ${weatherData.country}:\n`;
+                loadingDialogue.innerHTML += `Temperature: ${weatherData.main.temp}°C\n`;
+                loadingDialogue.innerHTML += `Weather: ${weatherData.weather[0].description}\n`;
+            }
+    
             loadingDialogue.innerHTML += `Welcome\n`;
-
+    
             return data;
         } catch (err) {
             throw new Error("Error fetching user data");
         }
-    };
+    };    
 
     // Matrix effect
     const canvas = document.createElement('canvas');
@@ -153,25 +165,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const output = document.querySelector(".output");
     const intro = document.querySelector(".intro");
 
-    const asciiArt = `
-    TYPE 'HELP' FOR A LIST OF COMMANDS                                                                                                   
-    `;
+    const asciiArt = ``;
 
     const introMessage = `
-    Welcome to my interactive portfolio. This site showcases various functionalities:<br><br>
-    * Help: Type help for a list of available commands.<br>
-    * Public Information: Display public data accessible when visiting any website.<br>
-    * Vulnerability Scan: Perform a network vulnerability scan with your consent (no data is stored).<br>
-    * Learn Mandarin: Run a Python script within the JavaScript environment to learn Mandarin phrases (run-python).<br>
-    * API Integration: Demonstrates the use of multiple APIs.<br><br>
-    Explore the commands to experience the features and capabilities of this portfolio.
-    `;
+    Glad to see you.
+
+    >   TYPE 'HELP' FOR A LIST OF COMMANDS 
+
+    Behind every great web-application is scalable, secure infrastructure.
+    Also, there are Mandarin flash cards via the 'run-python' command.
+    
+    Learn something new today. `;
+
 
     const typeMessage = (message, container, delay = 20) => {
         let index = 0;
         const interval = setInterval(() => {
             if (index < message.length) {
                 container.innerHTML += message[index++];
+                container.scrollTop = container.scrollHeight; // Auto-scroll
             } else {
                 clearInterval(interval);
             }
@@ -296,32 +308,6 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => appendOutput("Error fetching weather data", 'error'));
     };
-
-    // const fetchUserData = () => {
-    //     fetch("/api/userdata")
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             appendOutput(`IP Address: ${data.ip}`, 'response');
-    //             appendOutput(`Browser: ${data.browser}`, 'response');
-    //             appendOutput(`Version: ${data.version}`, 'response');
-    //             appendOutput(`OS: ${data.os}`, 'response');
-    //             appendOutput(`Platform: ${data.platform}`, 'response');
-    //             appendOutput('Mobile', 'boolean', data.isMobile);
-    //             appendOutput('iPhone', 'boolean', data.isiPhone);
-    //             appendOutput('Android', 'boolean', data.isAndroid);
-    //             appendOutput('Desktop', 'boolean', data.isDesktop);
-    //             appendOutput('Windows', 'boolean', data.isWindows);
-    //             appendOutput('Mac', 'boolean', data.isMac);
-    //             appendOutput('Linux', 'boolean', data.isLinux);
-    //             appendOutput(`Source: ${data.source}`, 'response');
-    //             appendOutput(`Country: ${data.geo.country}`, 'response');
-    //             appendOutput(`Region: ${data.geo.region}`, 'response');
-    //             appendOutput(`City: ${data.geo.city}`, 'response');
-    //             appendOutput(`Latitude: ${data.geo.latitude}`, 'response');
-    //             appendOutput(`Longitude: ${data.geo.longitude}`, 'response');
-    //         })
-    //         .catch(err => appendOutput("Error fetching user data", 'error'));
-    // };
 
     const runPythonScript = () => {
         fetch("/api/run-python")

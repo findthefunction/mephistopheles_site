@@ -5,14 +5,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Center content vertically */
+    justify-content: flex-start; /* Align content to the top */
     height: 100vh;
     margin: 0;
-    overflow: hidden; /* Hide overflow to remove scrollbars */
     font-size: 20px; /* Increase font size */
     text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
                  0 0 5px rgba(255, 170, 0, 0.6),
                  0 0 10px rgba(255, 170, 0, 0.4);
+    padding-top: 50px; /* Adjust padding to account for the navbar height */
 }
 
 #threejs-logo {
@@ -31,6 +31,10 @@ body {
     justify-content: space-around;
     padding: 10px 0;
     border-bottom: 1px solid #333;
+    position: fixed; /* Make the navbar fixed */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure it is above other elements */
 }
 
 .navbar a {
@@ -71,16 +75,18 @@ body {
     text-shadow: 0 0 2px rgba(255, 170, 0, 0.8),
                  0 0 5px rgba(255, 170, 0, 0.6),
                  0 0 10px rgba(255, 170, 0, 0.4);
-    font-size: 24px; /* Increase terminal font size */
+    font-size: 30px; /* Increase terminal font size */
+    white-space: pre; /* Preserve whitespace and line breaks */
+    flex-grow: 1; /* Allow terminal to grow and fill available space */
 }
 
 .output {
     background-color: transparent; /* Fully transparent background */
-    height: 400px;
+    height: 300px;
     overflow-y: auto;
     margin-bottom: 10px;
     color: #ffaa00;
-    font-size: 24px; /* Increase output font size */
+    font-size: 30px; /* Increase output font size */
 }
 
 .input {
@@ -133,14 +139,13 @@ body {
 }
 
 .ascii-art {
-    white-space: pre; /* Preserve whitespace and line breaks */
     font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
     width: 100%; /* Take the full width of the container */
     overflow: hidden; /* Hide horizontal scrollbar */
     text-align: center; /* Center the text horizontally */
     margin: 0 auto; /* Center the container */
-    padding: 20px; /* Add some padding */
-    font-size: 24px; /* Increase ASCII art font size */
+    padding: 10px; /* Add some padding */
+    font-size: 20px; /* Increase ASCII art font size */
 }
 
 /* Loading screen styles */
@@ -217,5 +222,5 @@ body {
     max-height: 90vh; /* Set a maximum height for the dialogue */
     overflow-y: auto; /* Enable vertical scrolling */
     white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    overflow: hidden; /* Hide horizontal scrollbar */
 }
-
