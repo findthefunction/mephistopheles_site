@@ -5,8 +5,8 @@ const useragent = require('express-useragent');
 const geoip = require('geoip-lite');
 const { exec } = require('child_process');
 const axios = require('axios');
-const nmap = require('node-nmap');
-nmap.nmapLocation = '/usr/bin/nmap'; // Specify the path to the Nmap executable
+// const nmap = require('node-nmap');
+// nmap.nmapLocation = '/usr/bin/nmap'; // Specify the path to the Nmap executable
 
 require('dotenv').config();
 
