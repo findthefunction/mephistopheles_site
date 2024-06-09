@@ -1,7 +1,8 @@
+// models/Visitor.js
 const mongoose = require('mongoose');
 
 const VisitorSchema = new mongoose.Schema({
-  ip: String,
+  ip: { type: String, required: true },
   browser: String,
   version: String,
   os: String,
@@ -19,12 +20,9 @@ const VisitorSchema = new mongoose.Schema({
     region: String,
     city: String,
     latitude: Number,
-    longitude: Number
+    longitude: Number,
   },
-  timestamp: {
-    type: Date,
-    default: Date.now
-  }
+  date: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Visitor', VisitorSchema);

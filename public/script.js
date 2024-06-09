@@ -190,6 +190,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }, delay);
     };
 
+    const typeMessageArray = (messages, container, delay = 20, callback) => {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < messages.length) {
+                const message = messages[index];
+                container.innerHTML += message + "<br><br>";
+                container.scrollTop = container.scrollHeight;
+                index++;
+            } else {
+                clearInterval(interval);
+                if (callback) callback();
+            }
+        }, delay);
+    };
+
     // Display ASCII art and intro message with typing animation
     const asciiArtContainer = document.createElement('div');
     asciiArtContainer.className = 'ascii-art';
@@ -248,16 +263,38 @@ document.addEventListener("DOMContentLoaded", () => {
         output.scrollTop = output.scrollHeight;
     };
 
+    const aboutMessage = [
+        "I'm a versatile software developer with a strong focus on security-centric projects and a deep passion for technology. Over the years, I've honed my skills across a variety of languages and platforms, enabling me to tackle a wide range of challenges and deliver robust, scalable solutions.",
+        "Technologies and Languages",
+        "- Programming Languages: I have extensive experience in multiple programming languages, including JavaScript, Python, and Java. My proficiency in these languages allows me to develop complex applications and automate tasks efficiently.",
+        "- Web Development: From front-end technologies like HTML, CSS, and modern JavaScript frameworks to back-end development with Node.js, Express.js, and Django, I create seamless, dynamic web applications that provide exceptional user experiences.",
+        "- Database Management: I work with both SQL and NoSQL databases, including MongoDB, PostgreSQL, and MySQL. My expertise includes designing database schemas, optimizing queries, and ensuring data integrity and security.",
+        "- API Development and Integration: I develop and integrate RESTful APIs, enabling seamless communication between different software components and third-party services. My projects often involve complex API interactions and data exchange.",
+        "- Cloud Services: With experience in deploying applications on cloud platforms such as AWS and DigitalOcean, I ensure that my solutions are scalable, resilient, and cost-effective.",
+        "- Security: Security is at the core of my work. I implement best practices in application security, conduct vulnerability assessments, and develop secure authentication and authorization mechanisms to protect sensitive data.",
+        "- Tools and Frameworks: My toolkit includes a wide array of tools and frameworks, such as Git for version control, Docker for containerization, and various CI/CD pipelines for automated testing and deployment.",
+        "Projects and Experience",
+        "- Web Applications: I have built numerous web applications, from e-commerce platforms to social networks, all designed with user experience and security in mind.",
+        "- Data Analysis and Visualization: Utilizing Python and related libraries, I develop data analysis pipelines and visualization tools that provide insights and drive decision-making processes.",
+        "- Network Security: My projects often involve securing network communications, implementing encryption protocols, and ensuring compliance with industry standards.",
+        "- System Automation: I create automation scripts and tools to streamline workflows, increase efficiency, and reduce manual intervention.",
+        "Approach and Philosophy",
+        "My approach to software development is rooted in the belief that a strong backend, coupled with sleek design, is crucial to building successful applications. I strive to deliver high-quality, maintainable code that meets the specific needs of my clients, while always keeping security and performance as top priorities.",
+        "Whether it's developing a new application from scratch, enhancing an existing system, or integrating various technologies to create a cohesive solution, I bring a get-stuff-done attitude to every project. Let's work together to turn your vision into reality with professional, reliable, and secure solutions."
+    ];
+    
+
     const handleCommand = (command) => {
         switch (command.toLowerCase()) {
             case "help":
                 appendOutput("Available commands: help, about, contact, clear, userdata, run-python, list-repos, cookies, headers, geo, fingerprint, scan, weather", 'response');
                 break;
             case "about":
-                appendOutput("This is a Linux terminal style portfolio website.", 'response');
+                output.innerHTML = "";  // Clear the output before typing the message
+                typeMessageArray(aboutMessage, output, 500);
                 break;
             case "contact":
-                appendOutput("Contact me at: example@example.com", 'response');
+                appendOutput("Contact me at: findthefunction+blockchaindegen@gmail.com", 'response');
                 break;
             case "clear":
                 output.innerHTML = "";

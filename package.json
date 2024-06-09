@@ -8,6 +8,8 @@
     "express-useragent": "^1.0.15",
     "geoip-lite": "^1.4.10",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.1",
     "node-fetch": "^3.3.2",
     "node-nmap": "^4.0.0",
     "request-ip": "^3.3.0",

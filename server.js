@@ -5,12 +5,17 @@ const useragent = require('express-useragent');
 const geoip = require('geoip-lite');
 const { exec } = require('child_process');
 const axios = require('axios');
-// const nmap = require('node-nmap');
-// nmap.nmapLocation = '/usr/bin/nmap'; // Specify the path to the Nmap executable
+const mongoose = require('mongoose');
+const connectDB = require('./database');
+const Visitor = require('./models/Visitor');
 
 require('dotenv').config();
 
 const app = express();
+
+// Connect to MongoDB
+connectDB();
+
 app.use(express.json()); // For parsing application/json
 
 app.use(requestIp.mw());
@@ -26,33 +31,43 @@ app.use('/models', express.static(path.join(__dirname, 'models')));
 app.use('/game', express.static(path.join(__dirname, 'public/game')));
 
 // Fetch user data endpoint
-app.get('/api/userdata', (req, res) => {
+app.get('/api/userdata', async (req, res) => {
     const ip = req.clientIp;
     const geo = geoip.lookup(ip);
+  
     const userData = {
-        ip: ip,
-        browser: req.useragent.browser,
-        version: req.useragent.version,
-        os: req.useragent.os,
-        platform: req.useragent.platform,
-        source: req.useragent.source,
-        isMobile: req.useragent.isMobile,
-        isiPhone: req.useragent.isiPhone,
-        isAndroid: req.useragent.isAndroid,
-        isDesktop: req.useragent.isDesktop,
-        isWindows: req.useragent.isWindows,
-        isMac: req.useragent.isMac,
-        isLinux: req.useragent.isLinux,
-        geo: geo ? {
-            country: geo.country,
-            region: geo.region,
-            city: geo.city,
-            latitude: geo.ll[0],
-            longitude: geo.ll[1]
-        } : null
+      ip: ip,
+      browser: req.useragent.browser,
+      version: req.useragent.version,
+      os: req.useragent.os,
+      platform: req.useragent.platform,
+      source: req.useragent.source,
+      isMobile: req.useragent.isMobile,
+      isiPhone: req.useragent.isiPhone,
+      isAndroid: req.useragent.isAndroid,
+      isDesktop: req.useragent.isDesktop,
+      isWindows: req.useragent.isWindows,
+      isMac: req.useragent.isMac,
+      isLinux: req.useragent.isLinux,
+      geo: geo ? {
+        country: geo.country,
+        region: geo.region,
+        city: geo.city,
+        latitude: geo.ll[0],
+        longitude: geo.ll[1]
+      } : null
     };
-    res.json(userData);
-});
+  
+    // Save to MongoDB
+    try {
+      const newVisitor = new Visitor(userData);
+      await newVisitor.save();
+      res.json(userData);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 
 // Run Python script endpoint
 app.get('/api/run-python', (req, res) => {
