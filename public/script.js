@@ -195,7 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const interval = setInterval(() => {
             if (index < messages.length) {
                 const message = messages[index];
-                container.innerHTML += message + "<br><br>";
+                const newLine = document.createElement("div");
+                newLine.innerHTML = message.replace(/\n/g, '<br>');  // Handle new lines
+                container.appendChild(newLine);
                 container.scrollTop = container.scrollHeight;
                 index++;
             } else {
